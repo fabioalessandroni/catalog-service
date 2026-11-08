@@ -1,0 +1,24 @@
+Il repo su GitHub è a posto, ma il workflow **Commit Stage** del primo push è **fallito**.
+
+**Cosa ho verificato**
+- Il push è andato: `origin/main` è al commit `ec4e5f7 Initial commit`, uguale a quello locale. L'unico file non tracciato è `github.txt`.
+- Run fallita: https://github.com/fabioalessandroni/catalog-service/actions/runs/42475191047
+  - **Build, unit tests and integration tests** → failure (`Process completed with exit code 1`)
+  - **Code vulnerability scanning** → saltato
+  - **Upload vulnerability report** → failure (`Input required and not supplied: sarif_file`). Questo è solo una conseguenza: lo scan non è partito, quindi non c'è nessun file SARIF da caricare.
+
+**Causa probabile**
+Tra gli errori c'è `timeout (10000ms)`, cioè lo stesso valore di `networkTimeout=10000` in `gradle/wrapper/gradle-wrapper.properties`. Quasi certamente il runner non è riuscito a scaricare Gradle 8.8 entro 10 secondi. Il log completo si legge solo da loggato, quindi non posso confermarlo al 100%. Ho però lanciato `./gradlew build` in locale: **BUILD SUCCESSFUL**, compila e i test passano. Il codice quindi è a posto.
+
+**Cosa fare**
+1. Soluzione veloce: nella tab Actions clicca **Re-run jobs**. Se era un timeout di rete passeggero, dovrebbe passare.
+2. Soluzione stabile, che posso fare io:
+   - portare `networkTimeout` a `60000`
+   - mettere sull'upload SARIF la condizione `if: steps.scan.outputs.sarif != ''`, così non dà un secondo errore quando lo scan non parte
+   - già che ci siamo, aggiornare le action deprecate segnalate negli avvisi: `setup-java@v5` e `codeql-action/upload-sarif@v4`. La v3 di CodeQL sarà deprecata a dicembre 2026.
+
+Vuoi che applichi le modifiche del punto 2 e faccia commit e push?
+
+
+
+sì, applica le modifiche e fai push 

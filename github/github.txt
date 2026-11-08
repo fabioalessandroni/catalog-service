@@ -1,0 +1,35 @@
+Si fa in due parti: prima crei un repository vuoto su GitHub dal browser, poi copi il progetto in una cartella nuova e lo invii lì.
+
+### 1. Crea il repository su GitHub
+1. Vai su https://github.com/new
+2. In **Repository name** scrivi `catalog-service`.
+3. Scegli Public o Private.
+4. **Non** spuntare "Add a README", ".gitignore" né "license": il repo deve essere vuoto.
+5. Clicca **Create repository**.
+
+### 2. Copia il progetto e fai il push (in Git Bash)
+La copia va messa **fuori** dalla cartella `cloud-native-spring-in-action`, altrimenti avresti un repo git dentro un altro.
+
+```bash
+# copia il progetto in una nuova cartella
+cp -r /c/Progetti/git/_EXERCISES/cloud-native-spring-in-action/Chapter03/03-end/catalog-service /c/Progetti/git/_EXERCISES/catalog-service
+cd /c/Progetti/git/_EXERCISES/catalog-service
+
+# rimuovi le cartelle generate (vengono ricreate dal build)
+rm -rf build .gradle .idea
+
+# crea il nuovo repo git e fai il primo commit
+git init -b main
+git add .
+git commit -m "Initial commit"
+
+# collega il repo GitHub e fai il push
+git remote add origin https://github.com/fabioalessandroni/catalog-service.git
+git push -u origin main
+```
+
+Così `.github/workflows/commit-stage.yml` si trova nella **radice** del nuovo repo. Il workflow parte già con questo primo push e puoi vederlo nella tab **Actions** di `https://github.com/fabioalessandroni/catalog-service`.
+
+Su `/c/Progetti/git/` come destinazione ho scelto io: puoi cambiarla con quella che preferisci.
+
+Se vuoi, crea tu il repo vuoto su GitHub (passo 1) e io faccio tutto il passo 2.
